@@ -1,11 +1,9 @@
 # AzureServiceBusDemo
-Demo for [azure service bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview)
+Demo for [azure service bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview) & [masstransit](https://masstransit-project.com/)
 > Sending/Receiving messages from/to
 >> - Queues
 >> - Topics
 >> - Subscriptions
-
-> using [masstransit](https://masstransit-project.com/)
 
 Solution structure :
 - `App` : console application net core 3.1
