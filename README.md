@@ -1,9 +1,10 @@
 # AzureServiceBusDemo
 Demo for [azure service bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview)
-> Sending/Receiving messages
+> Sending/Receiving messages from/to
 >> - Queues
 >> - Topics
 >> - Subscriptions
+
 > using [masstransit](https://masstransit-project.com/)
 
 Solution structure :
