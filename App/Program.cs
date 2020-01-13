@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Lib;
+using Lib.Bootstrapping;
 using Lib.Configuration;
 using Lib.Consumers;
-using Lib.Helpers;
+using Lib.HostedServices;
 using Lib.Messages;
 using MassTransit;
 using Microsoft.Extensions.Configuration;

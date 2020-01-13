@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Lib.Helpers
+namespace Lib.Bootstrapping
 {
     public class MassTransitBootstrapper : IMassTransitBootstrapper
     {

@@ -1,6 +1,6 @@
 ﻿using MassTransit;
 
-namespace Lib.Helpers
+namespace Lib.Bootstrapping
 {
     public interface IMassTransitBootstrapper
     {

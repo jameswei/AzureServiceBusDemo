@@ -6,7 +6,7 @@ using MassTransit;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Lib
+namespace Lib.HostedServices
 {
     public class FakeSenderHostedService : IHostedService
     {
@@ -25,7 +25,7 @@ namespace Lib
 
             for (var index = 0; index < 10; index++)
             {
-                await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
                 await SendFakeMessageAsync();
             }
 
