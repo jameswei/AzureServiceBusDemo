@@ -11,7 +11,7 @@ Solution structure :
 
 Demo will start 2 hosted services :
 - `BusHostedService` : responsible of starting/stopping bus
-- `FakeSenderHostedService` : responsible of publishing fake messages to bus
+- `FakeSenderHostedService` : responsible of publishing messages to bus
 
 Bus is created & configured with `MassTransitBootstrapper` helper class
 
