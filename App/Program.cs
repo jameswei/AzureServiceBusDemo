@@ -20,17 +20,19 @@ namespace App
         public  static async Task Main(string[] args)
         {
             var host = new HostBuilder()
-                .ConfigureAppConfiguration(config =>
+                .ConfigureAppConfiguration((hostingContext, configBuilder) =>
                 {
-                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-                    config.AddEnvironmentVariables();
-                    config.AddCommandLine(args);
+                    var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                    configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                    configBuilder.AddJsonFile($"appsettings.{environmentName}.json", optional: true);
+                    configBuilder.AddEnvironmentVariables();
+                    configBuilder.AddCommandLine(args);
                 })
                 .ConfigureLogging((hostingContext, loggingBuilder) =>
                 {
                     loggingBuilder.AddNLog();
                     loggingBuilder.AddConsole();
-                    loggingBuilder.AddApplicationInsights();
+                    loggingBuilder.AddApplicationInsights(hostingContext.GetInstrumentationKey());
                     loggingBuilder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     loggingBuilder.Services.AddSingleton(serviceProvider =>
                     {
@@ -40,7 +42,6 @@ namespace App
                 })
                 .ConfigureServices((hostingContext, services) =>
                 {
-                    services.AddLogging();
                     services.Configure<AppInsightsSection>(hostingContext.Configuration.GetSection("ApplicationInsights"));
                     services.Configure<ServiceBusSection>(hostingContext.Configuration.GetSection("ServiceBus"));
                     services.AddTransient<IMassTransitBootstrapper, MassTransitBootstrapper>();
@@ -67,6 +68,12 @@ namespace App
 
             Console.WriteLine("Press any key to exit program !");
             Console.ReadKey();
+        }
+
+        private static string GetInstrumentationKey(this HostBuilderContext context)
+        {
+            var applicationInsights = context.Configuration.GetSection("ApplicationInsights").Get<AppInsightsSection>();
+            return applicationInsights.InstrumentationKey;
         }
     }
 }
