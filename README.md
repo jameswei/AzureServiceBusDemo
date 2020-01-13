@@ -1,6 +1,6 @@
 # AzureServiceBusDemo
 Demo for [azure service bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview) & [masstransit](https://masstransit-project.com/)
-> Sending/Receiving messages from/to
+> Sending/Receiving messages From/To
 >> - Queues
 >> - Topics
 >> - Subscriptions
