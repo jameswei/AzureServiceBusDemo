@@ -4,11 +4,8 @@ namespace Lib.Consumers.Attributes
 {
     public sealed class SomeMessageConsumerAttribute : ConsumerAttribute
     {
-        public SomeMessageConsumerAttribute()
+        public SomeMessageConsumerAttribute() : base($"{nameof(SomeMessageConsumer)}_Queue.{Environment.MachineName}", $"{nameof(SomeMessageConsumer)}_Topic.{Environment.MachineName}", $"{nameof(SomeMessageConsumer)}_Subscription.{Environment.MachineName}")
         {
-            QueueName = $"{nameof(SomeMessageConsumer)}_Queue.{Environment.MachineName}";
-            TopicName = $"{nameof(SomeMessageConsumer)}_Topic.{Environment.MachineName}";
-            SubscriptionName = $"{nameof(SomeMessageConsumer)}_Subscription.{Environment.MachineName}";
         }
     }
 }

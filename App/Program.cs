@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Lib;
 using Lib.Bootstrapping;
 using Lib.Configuration;
 using Lib.Consumers;
@@ -16,9 +15,9 @@ using NLog.Extensions.Logging;
 
 namespace App
 {
-    public  static class Program
+    public static class Program
     {
-        public  static async Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var host = new HostBuilder()
                 .ConfigureAppConfiguration((hostingContext, configBuilder) =>
