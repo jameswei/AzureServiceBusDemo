@@ -4,9 +4,9 @@ namespace Lib.Consumers.Attributes
 {
     public abstract class ConsumerAttribute : Attribute
     {
-        protected string QueueName { get; }
-        public string TopicName { get; set; }
-        public string SubscriptionName { get; set; }
+        public string QueueName { get; }
+        public string TopicName { get; }
+        public string SubscriptionName { get; }
 
         protected ConsumerAttribute(string queueName, string topicName, string subscriptionName)
         {
