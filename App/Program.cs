@@ -17,55 +17,55 @@ namespace App
 {
     public static class Program
     {
+
+        private static void LoggingConfig(HostBuilderContext ctx, ILoggingBuilder builder)
+        {
+            builder.AddNLog();
+            builder.AddConsole();
+            builder.AddApplicationInsights(ctx.Configuration.GetSection("ApplicationInsight").Get<AppInsightsSection>().InstrumentationKey);
+            builder.AddConfiguration(ctx.Configuration.GetSection("Logging"));
+            builder.Services.AddSingleton(srvProvider => srvProvider.GetRequiredService<ILoggerFactory>().CreateLogger("AzureServiceBusDemo"));
+        }
+
+        private static void AppConfig(HostBuilderContext ctx, IConfigurationBuilder builder, string[] args)
+        {
+            builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            builder.AddJsonFile($"appsettings.{env}.json", optional: true);
+            builder.AddEnvironmentVariables();
+            builder.AddCommandLine(args);
+        }
+
+        private static void ServiceConfig(HostBuilderContext ctx, IServiceCollection services)
+        {
+            services.Configure<AppInsightsSection>(ctx.Configuration.GetSection("ApplicationInsight"));
+            services.Configure<ServiceBusSection>(ctx.Configuration.GetSection("ServiceBus"));
+            services.AddTransient<IMassTransitBootstrapper, MassTransitBootstrapper>();
+            services.AddTransient<SomeMessageConsumer>();
+            services.AddTransient<SomeMessage>();
+            services.AddSingleton(serviceProvider =>
+                {
+                    var massTransitHelper = serviceProvider.GetRequiredService<IMassTransitBootstrapper>();
+                    return massTransitHelper.CreateBusControl();
+                });
+            services.AddHostedService<BusHostedService>();
+            services.AddHostedService<FakeSenderHostedService>();
+            services.AddMassTransit(configurator =>
+            {
+                configurator.AddConsumers(MassTransitBootstrapper.ConsumerTypes);
+            });
+        }
+
         public static async Task Main(string[] args)
         {
             var host = new HostBuilder()
-                .ConfigureAppConfiguration((hostingContext, configBuilder) =>
-                {
-                    var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                    configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-                    configBuilder.AddJsonFile($"appsettings.{environmentName}.json", optional: true);
-                    configBuilder.AddEnvironmentVariables();
-                    configBuilder.AddCommandLine(args);
-                })
-                .ConfigureLogging((hostingContext, loggingBuilder) =>
-                {
-                    loggingBuilder.AddNLog();
-                    loggingBuilder.AddConsole();
-                    loggingBuilder.AddApplicationInsights(hostingContext.GetInstrumentationKey());
-                    loggingBuilder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    loggingBuilder.Services.AddSingleton(serviceProvider =>
-                    {
-                        var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-                        return loggerFactory.CreateLogger("AzureServiceBusDemo");
-                    });
-                })
-                .ConfigureServices((hostingContext, services) =>
-                {
-                    services.Configure<AppInsightsSection>(hostingContext.Configuration.GetSection("ApplicationInsights"));
-                    services.Configure<ServiceBusSection>(hostingContext.Configuration.GetSection("ServiceBus"));
-                    services.AddTransient<IMassTransitBootstrapper, MassTransitBootstrapper>();
-                    services.AddTransient<SomeMessageConsumer>();
-                    services.AddTransient<SomeMessage>();
-                    services.AddSingleton(serviceProvider =>
-                    {
-                        var massTransitHelper = serviceProvider.GetRequiredService<IMassTransitBootstrapper>();
-                        var busControl = massTransitHelper.CreateBusControl();
-                        return busControl;
-                    });
-                    services.AddHostedService<BusHostedService>();
-                    services.AddHostedService<FakeSenderHostedService>();
-                    services.AddMassTransit(configurator =>
-                    {
-                        configurator.AddConsumers(MassTransitBootstrapper.ConsumerTypes);
-                    });
-                })
+                .ConfigureAppConfiguration((ctx, builder) => AppConfig(ctx, builder, args))
+                .ConfigureLogging(LoggingConfig)
+                .ConfigureServices(ServiceConfig)
                 .UseConsoleLifetime();
-
             await host.RunConsoleAsync();
 
             LogManager.Shutdown();
-
             Console.WriteLine("Press any key to exit program !");
             Console.ReadKey();
         }
