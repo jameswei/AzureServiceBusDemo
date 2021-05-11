@@ -43,11 +43,7 @@ namespace App
             services.AddTransient<IMassTransitBootstrapper, MassTransitBootstrapper>();
             services.AddTransient<SomeMessageConsumer>();
             services.AddTransient<SomeMessage>();
-            services.AddSingleton(serviceProvider =>
-                {
-                    var massTransitHelper = serviceProvider.GetRequiredService<IMassTransitBootstrapper>();
-                    return massTransitHelper.CreateBusControl();
-                });
+            services.AddSingleton(serviceProvider => serviceProvider.GetRequiredService<IMassTransitBootstrapper>().CreateBusControl());
             services.AddHostedService<BusHostedService>();
             services.AddHostedService<FakeSenderHostedService>();
             services.AddMassTransit(configurator =>
